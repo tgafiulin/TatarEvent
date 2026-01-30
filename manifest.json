@@ -1,6 +1,6 @@
 {
   "name": "TatarEvent 2.0",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Расширение для упрощения жизни в Jevent",
   "manifest_version": 3,
   "content_scripts": [
