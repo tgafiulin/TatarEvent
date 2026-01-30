@@ -1,0 +1,17 @@
+{
+  "name": "TatarEvent 2.0",
+  "version": "1.0.2",
+  "description": "Расширение для упрощения жизни в Jevent",
+  "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": ["https://jevent.jugru.org/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
