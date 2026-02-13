@@ -15,9 +15,18 @@ function hideReview () {
     const style = document.createElement('style');
     style.id = 'custom-style';
     style.textContent = `
-      .col-rating-sum b,
-      .polling-details-table {
+      .col-rating-sum b {
         opacity: 0 !important;
+      }
+      .polling-details-table th:nth-child(1),
+      .polling-details-table td:nth-child(1),
+      .polling-details-table th:nth-child(3),
+      .polling-details-table td:nth-child(3) {
+        opacity: 0 !important;
+      }
+      .polling-details-table tbody tr,
+      .polling-details-table tbody tr td {
+        background-color: #fff !important;
       }
     `;
     document.head.appendChild(style);
@@ -114,10 +123,34 @@ function runVotesBadges() {
     });
 }
 
-// Таблица может подгружаться асинхронно (DataTables/Vue) — запускаем с задержкой и повторно
+const POLLING_TABLE_ID = 'pollingTable';
+const POLLING_PAGE_ID = 'pollingPage';
+const VOTES_BADGE_DEBOUNCE_MS = 400;
+
+function initVotesBadgesObserver() {
+  let debounceTimer = null;
+
+  function scheduleRun() {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      debounceTimer = null;
+      if (document.getElementById(POLLING_TABLE_ID)) {
+        runVotesBadges();
+      }
+    }, VOTES_BADGE_DEBOUNCE_MS);
+  }
+
+  const observer = new MutationObserver(scheduleRun);
+  const target = document.getElementById(POLLING_PAGE_ID) || document.body;
+  observer.observe(target, { childList: true, subtree: true });
+
+  if (document.getElementById(POLLING_TABLE_ID)) {
+    runVotesBadges();
+  }
+}
+
 if (POLLING_PATH_REGEX.test(location.pathname)) {
-  setTimeout(runVotesBadges, 1500);
-  setTimeout(runVotesBadges, 4000);
+  initVotesBadgesObserver();
 }
 
 // --- Шаг 1: Сохранение черновика ревью ---
